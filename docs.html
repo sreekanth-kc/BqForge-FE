@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BqForge — Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'ZCOOL QingKe HuangYou', sans-serif; }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      background: radial-gradient(circle at 20% 20%, rgba(124,58,237,0.1), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(79,70,229,0.1), transparent 40%);
+      z-index: -1;
+      filter: blur(80px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 260px;
+      overflow-y: auto;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(16px);
+      padding: 24px 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    .main-content {
+      margin-left: 260px;
+      padding: 48px 48px 80px;
+      max-width: 900px;
+    }
+
+    .sidebar-link {
+      display: block;
+      padding: 6px 24px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+
+    .sidebar-link:hover { color: rgba(255,255,255,0.9); }
+    .sidebar-link.active { color: #a78bfa; }
+
+    .sidebar-section-label {
+      padding: 16px 24px 4px;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .sidebar-category {
+      display: block;
+      padding: 8px 24px;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.55);
+      transition: color 0.2s;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar-category:hover {
+      color: rgba(255,255,255,0.9);
+      border-left-color: rgba(167,139,250,0.5);
+    }
+
+    /* Practice card */
+    .practice-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .practice-card:hover {
+      border-color: rgba(167,139,250,0.2);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .badge-high   { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+    .badge-medium { background: rgba(234,179,8,0.15);  color: #fde68a; }
+    .badge-low    { background: rgba(34,197,94,0.15);  color: #86efac; }
+
+    .badge {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .id-tag {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #a78bfa;
+      background: rgba(167,139,250,0.1);
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+
+    /* Code block */
+    pre {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      line-height: 1.7;
+      color: #d1d5db;
+      font-family: 'Menlo', 'Monaco', monospace;
+    }
+
+    code {
+      font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.07);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #c4b5fd;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 48px 0;
+    }
+
+    /* Checklist items */
+    .do-item, .dont-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.5;
+    }
+
+    .do-icon   { color: #4ade80; flex-shrink: 0; margin-top: 2px; }
+    .dont-icon { color: #f87171; flex-shrink: 0; margin-top: 2px; }
+
+    /* Tool row */
+    .tool-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .tool-name {
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #a78bfa;
+      min-width: 190px;
+      padding-top: 1px;
+    }
+
+    /* Responsive: hide sidebar on small screens */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 24px 20px 60px; }
+    }
+  </style>
+</head>
+<body class="bg-black text-white">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="px-6 mb-6">
+      <a href="index.html" class="font-extrabold text-base tracking-tight"
+         style="background: linear-gradient(90deg, #fff, #a78bfa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+        BqForge
+      </a>
+      <div class="text-gray-600 text-xs mt-1">Documentation</div>
+    </div>
+
+    <div class="sidebar-section-label">Overview</div>
+    <a href="#overview"     class="sidebar-category">What is BqForge?</a>
+    <a href="#tools"        class="sidebar-category">MCP Tools</a>
+    <a href="#install"      class="sidebar-category">Installation</a>
+    <a href="#workflow"     class="sidebar-category">Workflow</a>
+
+    <div class="sidebar-section-label">Best Practices</div>
+    <a href="#query-optimization"   class="sidebar-category">Query Optimization</a>
+    <a href="#schema-design"        class="sidebar-category">Schema Design</a>
+    <a href="#cost-management"      class="sidebar-category">Cost Management</a>
+    <a href="#security"             class="sidebar-category">Security & Access</a>
+    <a href="#materialized-views"   class="sidebar-category">Materialized Views</a>
+    <a href="#monitoring"           class="sidebar-category">Monitoring</a>
+    <a href="#data-ingestion"       class="sidebar-category">Data Ingestion</a>
+    <a href="#workload-management"  class="sidebar-category">Workload Management</a>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- Header -->
+    <div id="overview" class="mb-12">
+      <div class="text-xs font-mono text-purple-400 mb-3 uppercase tracking-widest">BqForge v1.0</div>
+      <h1 class="text-4xl font-extrabold mb-4" style="background: linear-gradient(90deg, #fff, #c7d2fe, #a78bfa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+        Documentation
+      </h1>
+      <p class="text-gray-400 max-w-2xl leading-relaxed">
+        BqForge is an MCP (Model Context Protocol) server that exposes curated BigQuery best practices as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, and more.
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <span class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-gray-400">Python 3.10+</span>
+        <span class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-gray-400">MCP Protocol</span>
+        <span class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-gray-400">Claude Desktop</span>
+        <span class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-gray-400">Cursor</span>
+        <a href="https://github.com/sreekanth-kc/BqForge" target="_blank" class="text-xs px-3 py-1.5 rounded-full border border-purple-500/30 text-purple-400 hover:border-purple-400 transition-colors">GitHub →</a>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- MCP Tools -->
+    <section id="tools" class="mb-16">
+      <h2 class="text-2xl font-bold mb-2">MCP Tools</h2>
+      <p class="text-gray-500 text-sm mb-8">7 callable tools exposed by the BqForge server. Use them individually or let your AI chain them automatically.</p>
+
+      <div class="tool-row">
+        <div class="tool-name">resolve_topic</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Resolve a natural-language question to ranked practice IDs with relevance scores. Always the first step in the two-step workflow.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_practices</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Fetch focused practice content within a token budget. Assembles the best-matching practices in relevance order until the budget is exhausted.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">review_query</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Analyse a SQL query for best-practice violations — SELECT *, missing partition filters, CROSS JOINs, non-deterministic functions, and more.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_best_practices</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Retrieve all practices for a given category: <code>query_optimization</code>, <code>schema_design</code>, <code>cost_management</code>, <code>security</code>, <code>materialized_views</code>, <code>monitoring</code>, <code>data_ingestion</code>, <code>workload_management</code>.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">search_practices</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Full-text keyword search across all practice titles, descriptions, do/don't items, and examples.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_practice_detail</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Get the full detail for a single practice by ID — e.g. <code>QO-002</code>, <code>SD-001</code>, <code>SE-003</code>.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">list_all_practice_ids</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Return a compact list of every practice ID and title across all 8 categories.</div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Installation -->
+    <section id="install" class="mb-16">
+      <h2 class="text-2xl font-bold mb-2">Installation</h2>
+      <p class="text-gray-500 text-sm mb-8">Works with Claude Desktop and any MCP-compatible client. No API keys required.</p>
+
+      <div class="mb-6">
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-3">Clone and install</div>
+        <pre>git clone https://github.com/sreekanth-kc/BqForge
+cd BqForge
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt</pre>
+      </div>
+
+      <div class="mb-6">
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-3">Add to Claude Desktop</div>
+        <p class="text-gray-500 text-xs mb-3">Edit <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></p>
+        <pre>{
+  "mcpServers": {
+    "bqforge": {
+      "command": "/absolute/path/to/.venv/bin/python",
+      "args": ["/absolute/path/to/BqForge/server.py"]
+    }
+  }
+}</pre>
+        <p class="text-gray-600 text-xs mt-3">Restart Claude Desktop after saving.</p>
+      </div>
+
+      <div class="mb-6">
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-3">Activate in Claude</div>
+        <pre><span style="color:#6b7280"># Type this to activate automatic BqForge lookups</span>
+use bqforge</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Workflow -->
+    <section id="workflow" class="mb-16">
+      <h2 class="text-2xl font-bold mb-2">Recommended Workflow</h2>
+      <p class="text-gray-500 text-sm mb-8">Two-step pattern for best results.</p>
+
+      <pre><span style="color:#6b7280"># Step 1: resolve topic to ranked practice IDs</span>
+resolve_topic(query="reduce query cost")
+<span style="color:#6b7280">→ [CO-001 (score 9), QO-001 (score 7), CO-002 (score 6), …]</span>
+
+<span style="color:#6b7280"># Step 2: fetch focused content within token budget</span>
+get_practices(topic="reduce query cost", max_tokens=3000)
+<span style="color:#6b7280">→ Markdown with top practices, do/don't lists, SQL examples</span></pre>
+
+      <div class="mt-6">
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-3">Token budget guidance</div>
+        <div class="space-y-2 text-sm text-gray-400">
+          <div class="flex gap-4"><code>max_tokens=1500</code><span>Quick answer</span></div>
+          <div class="flex gap-4"><code>max_tokens=3000</code><span>Normal (default)</span></div>
+          <div class="flex gap-4"><code>max_tokens=6000</code><span>Deep dive</span></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── QUERY OPTIMIZATION ── -->
+    <section id="query-optimization" class="mb-16">
+      <div class="text-xs font-mono text-purple-400 mb-2 uppercase tracking-widest">QO-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Query Optimization</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices to write efficient, performant BigQuery SQL that minimises bytes processed and maximises slot utilisation.</p>
+
+      <!-- QO-001 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-001</span>
+          <span class="badge badge-high">HIGH</span>
+          <span class="text-xs text-gray-500">Cost &amp; Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Select only the columns you need</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery is columnar; SELECT * reads every column and bills you for all bytes in those columns. Always project only the fields required.</p>
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <div class="text-xs text-green-400 uppercase tracking-widest mb-2">Do</div>
+            <div class="do-item"><span class="do-icon">✓</span><span>SELECT user_id, event_type, created_at FROM events</span></div>
+            <div class="do-item"><span class="do-icon">✓</span><span>Use column pruning in views and materialised views</span></div>
+          </div>
+          <div>
+            <div class="text-xs text-red-400 uppercase tracking-widest mb-2">Avoid</div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>SELECT * FROM large_table</span></div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>SELECT * in subqueries or CTEs</span></div>
+          </div>
+        </div>
+        <pre>SELECT order_id, total_amount FROM orders WHERE status = 'COMPLETED'</pre>
+      </div>
+
+      <!-- QO-002 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-002</span>
+          <span class="badge badge-high">HIGH</span>
+          <span class="text-xs text-gray-500">Cost &amp; Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Filter on partition and cluster columns early</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Partition pruning eliminates entire partitions from the scan. Clustering reduces blocks read within a partition. Always filter on the partition column (usually a DATE/TIMESTAMP) and cluster keys.</p>
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <div class="text-xs text-green-400 uppercase tracking-widest mb-2">Do</div>
+            <div class="do-item"><span class="do-icon">✓</span><span>WHERE event_date BETWEEN '2024-01-01' AND '2024-03-31'</span></div>
+            <div class="do-item"><span class="do-icon">✓</span><span>Declare partition expiration to auto-delete old data</span></div>
+          </div>
+          <div>
+            <div class="text-xs text-red-400 uppercase tracking-widest mb-2">Avoid</div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>WHERE DATE(timestamp_col) = '2024-01-01' — wrapping disables pruning</span></div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>WHERE CAST(partition_col AS STRING) = '20240101'</span></div>
+          </div>
+        </div>
+        <pre>SELECT * FROM `project.dataset.events`
+WHERE event_date = '2024-06-15'  -- partition filter
+  AND country = 'IN'             -- cluster filter</pre>
+      </div>
+
+      <!-- QO-003 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-003</span>
+          <span class="badge badge-medium">MEDIUM</span>
+          <span class="text-xs text-gray-500">Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Avoid data skew in JOINs and GROUP BY</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">When a join key or GROUP BY key has very uneven distribution, one worker slot gets overloaded. Pre-filter nulls and consider approximate aggregations.</p>
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <div class="text-xs text-green-400 uppercase tracking-widest mb-2">Do</div>
+            <div class="do-item"><span class="do-icon">✓</span><span>Filter NULL keys before joining: WHERE key IS NOT NULL</span></div>
+            <div class="do-item"><span class="do-icon">✓</span><span>Use APPROX_COUNT_DISTINCT() for large sets</span></div>
+          </div>
+          <div>
+            <div class="text-xs text-red-400 uppercase tracking-widest mb-2">Avoid</div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>JOIN on columns with high NULL rates without filtering</span></div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>GROUP BY on low-cardinality skewed columns</span></div>
+          </div>
+        </div>
+        <pre>SELECT a.user_id, SUM(b.amount)
+FROM users a
+JOIN transactions b ON a.user_id = b.user_id
+WHERE a.user_id IS NOT NULL
+GROUP BY a.user_id</pre>
+      </div>
+
+      <!-- QO-004 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-004</span>
+          <span class="badge badge-low">LOW</span>
+          <span class="text-xs text-gray-500">Readability &amp; Maintainability</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Use CTEs instead of deeply nested subqueries</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Common Table Expressions (WITH clauses) improve readability and allow BigQuery's optimiser to materialise intermediate results.</p>
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <div class="text-xs text-green-400 uppercase tracking-widest mb-2">Do</div>
+            <div class="do-item"><span class="do-icon">✓</span><span>WITH active_users AS (SELECT ... FROM users WHERE active = TRUE)</span></div>
+            <div class="do-item"><span class="do-icon">✓</span><span>Name CTEs descriptively</span></div>
+          </div>
+          <div>
+            <div class="text-xs text-red-400 uppercase tracking-widest mb-2">Avoid</div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>SELECT * FROM (SELECT * FROM (SELECT * FROM ...))</span></div>
+            <div class="dont-item"><span class="dont-icon">✗</span><span>Duplicate the same subquery in multiple places</span></div>
+          </div>
+        </div>
+        <pre>WITH orders_2024 AS (
+  SELECT order_id, customer_id, amount
+  FROM orders WHERE order_date >= '2024-01-01'
+),
+high_value AS (
+  SELECT * FROM orders_2024 WHERE amount > 1000
+)
+SELECT customer_id, COUNT(*) AS big_orders
+FROM high_value GROUP BY customer_id</pre>
+      </div>
+
+      <!-- QO-005 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-005</span>
+          <span class="badge badge-high">HIGH</span>
+          <span class="text-xs text-gray-500">Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Prefer JOIN over correlated subqueries</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Correlated subqueries execute once per row of the outer query. A JOIN is processed in parallel across slots and is almost always faster.</p>
+        <pre>-- Instead of correlated subquery
+SELECT o.order_id
+FROM orders o
+LEFT JOIN refunds r ON o.order_id = r.order_id
+WHERE r.order_id IS NULL  -- orders with no refund</pre>
+      </div>
+
+      <!-- QO-006 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-006</span>
+          <span class="badge badge-medium">MEDIUM</span>
+          <span class="text-xs text-gray-500">Performance &amp; Cost</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Use approximate aggregation functions for analytics</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">For dashboards where ~1% error is acceptable, APPROX_COUNT_DISTINCT and HyperLogLog sketches are orders of magnitude faster than exact COUNT(DISTINCT).</p>
+        <pre>SELECT
+  event_date,
+  APPROX_COUNT_DISTINCT(user_id) AS dau
+FROM events
+WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+GROUP BY event_date ORDER BY event_date</pre>
+      </div>
+
+      <!-- QO-007 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-007</span>
+          <span class="badge badge-medium">MEDIUM</span>
+          <span class="text-xs text-gray-500">Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Optimise JOIN order — largest table first</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery's distributed JOIN engine broadcasts smaller tables to all workers. Place the largest table first (left side) to enable broadcast joins, reducing shuffle overhead.</p>
+        <pre>-- Largest table (orders) first, smaller lookup (products) last
+SELECT o.order_id, p.product_name, o.amount
+FROM dataset.orders o          -- large
+JOIN dataset.products p        -- small lookup
+  ON o.product_id = p.product_id
+WHERE o.order_date >= '2024-01-01'</pre>
+      </div>
+
+      <!-- QO-008 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-008</span>
+          <span class="badge badge-high">HIGH</span>
+          <span class="text-xs text-gray-500">Performance &amp; Cost</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Replace self-joins with window functions</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Self-joins scan the same table twice and can square the output row count. Window functions (LAG, LEAD, SUM OVER, RANK) achieve running totals, comparisons, and rankings in a single pass.</p>
+        <pre>-- Running revenue per user — window function, no self-join
+SELECT
+  user_id, order_date, amount,
+  SUM(amount) OVER (PARTITION BY user_id ORDER BY order_date) AS running_total
+FROM dataset.orders</pre>
+      </div>
+
+      <!-- QO-009 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-009</span>
+          <span class="badge badge-medium">MEDIUM</span>
+          <span class="text-xs text-gray-500">Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Use SEARCH() and search indexes for full-text lookups</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">The BigQuery SEARCH() function with a search index performs inverted-index lookups, dramatically outperforming LIKE '%term%' on large tables (&gt;10 GB).</p>
+        <pre>CREATE SEARCH INDEX log_idx ON dataset.app_logs(log_message);
+
+SELECT request_id, log_message
+FROM dataset.app_logs
+WHERE log_date = CURRENT_DATE()
+  AND SEARCH(log_message, 'NullPointerException')</pre>
+      </div>
+
+      <!-- QO-010 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-010</span>
+          <span class="badge badge-medium">MEDIUM</span>
+          <span class="text-xs text-gray-500">Performance &amp; Cost</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Optimise UNNEST patterns for ARRAY and STRUCT columns</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">UNNEST explodes array elements into rows. Filter before unnesting and avoid unnesting multiple independent arrays in the same query (produces a cross-product).</p>
+        <pre>-- Check array contains value WITHOUT full unnest
+SELECT user_id FROM dataset.users
+WHERE EXISTS (
+  SELECT 1 FROM UNNEST(interest_tags) AS tag WHERE tag = 'sports'
+)
+
+-- Access nested struct field directly (no UNNEST needed)
+SELECT address.city FROM dataset.users</pre>
+      </div>
+
+      <!-- QO-011 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-011</span>
+          <span class="badge badge-low">LOW</span>
+          <span class="text-xs text-gray-500">Cost &amp; Speed</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Use TABLESAMPLE for fast exploratory queries</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">TABLESAMPLE SYSTEM draws a random percentage of data blocks, reducing bytes scanned proportionally. Ideal for validating query logic before running full scans.</p>
+        <pre>SELECT status, COUNT(*) AS cnt
+FROM dataset.orders TABLESAMPLE SYSTEM (1 PERCENT)
+GROUP BY status ORDER BY cnt DESC</pre>
+      </div>
+
+      <!-- QO-012 -->
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="id-tag">QO-012</span>
+          <span class="badge badge-medium">MEDIUM</span>
+          <span class="text-xs text-gray-500">Cost &amp; Performance</span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Use granular wildcard table prefixes</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Wildcard tables scan every matching table. The more specific the prefix, the fewer tables scanned. Always add a _TABLE_SUFFIX filter.</p>
+        <pre>SELECT event_type, COUNT(*) AS cnt
+FROM `project.dataset.events_2024*`
+WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0131'  -- Jan 2024 only
+GROUP BY event_type</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── SCHEMA DESIGN ── -->
+    <section id="schema-design" class="mb-16">
+      <div class="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">SD-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Schema Design</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for designing BigQuery table schemas that balance storage cost, query performance, and maintainability.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Partition tables on a date/timestamp column</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Partitioning physically separates data by time unit. Queries that filter on the partition column only scan relevant partitions, dramatically reducing cost.</p>
+        <pre>CREATE TABLE `project.dataset.events`
+PARTITION BY DATE(event_timestamp)
+CLUSTER BY user_id, event_type
+OPTIONS(partition_expiration_days=730)
+AS SELECT * FROM staging.raw_events WHERE FALSE</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Cluster tables on frequently filtered/joined columns</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Clustering sorts data within each partition by up to 4 columns. Queries that filter or join on cluster keys skip irrelevant blocks at no extra cost.</p>
+        <pre>CREATE TABLE sales
+PARTITION BY DATE(sale_date)
+CLUSTER BY region, product_category, customer_id
+AS SELECT * FROM staging.sales</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance &amp; Simplicity</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use STRUCT and ARRAY to denormalise related data</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery is optimised for denormalised schemas. Storing nested/repeated fields as STRUCT or ARRAY avoids expensive JOINs and keeps related data co-located.</p>
+        <pre>CREATE TABLE users (
+  user_id STRING,
+  name    STRING,
+  address STRUCT&lt;street STRING, city STRING, country STRING&gt;,
+  tags    ARRAY&lt;STRING&gt;
+)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-004</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Storage &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Choose the right data types</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Correct data types reduce storage, speed up comparisons, and avoid implicit casts that can break partition pruning.</p>
+        <pre>CREATE TABLE transactions (
+  transaction_id INT64,
+  amount         NUMERIC(18,2),
+  created_at     TIMESTAMP,
+  is_refunded    BOOL
+)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Maintainability &amp; Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Avoid wide tables with hundreds of columns</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Tables with hundreds of sparse columns are hard to maintain. Use STRUCT grouping or split into logical sub-tables.</p>
+        <pre>-- Instead of 50 separate metric columns:
+metrics STRUCT&lt;
+  clicks       INT64,
+  impressions  INT64,
+  conversions  INT64,
+  revenue      NUMERIC
+&gt;</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-006</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance &amp; Maintainability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Prefer time-partitioned tables over date-sharded tables</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Date-sharded tables (events_20240101, events_20240102) require wildcard queries and increase management overhead. A single time-partitioned table gives the same pruning with better optimiser support.</p>
+        <pre>CREATE OR REPLACE TABLE dataset.events
+PARTITION BY event_date
+CLUSTER BY user_id
+OPTIONS(partition_expiration_days=365)
+AS
+SELECT * FROM `dataset.events_*`
+WHERE _TABLE_SUFFIX >= '20230101'</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-007</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance &amp; Flexibility</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use BigQuery native JSON type for semi-structured data</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">The native JSON type stores data in a lossless binary encoding and supports path-based access without string parsing. It outperforms JSON stored as STRING.</p>
+        <pre>CREATE TABLE dataset.events (
+  event_id   STRING,
+  event_date DATE,
+  event_type STRING,
+  properties JSON     -- dynamic per-event fields
+);
+
+SELECT event_id, properties.user_agent
+FROM dataset.events
+WHERE JSON_VALUE(properties, '$.country') = 'IN'</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SD-008</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Storage Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Choose physical storage billing for compressed savings</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">For datasets with high compression ratios, physical billing can cut storage costs by 30–70%. Evaluate on a dataset-by-dataset basis.</p>
+        <pre>-- Compare before switching
+SELECT
+  table_name,
+  total_logical_bytes / 1e9   AS logical_gb,
+  active_physical_bytes / 1e9 AS physical_gb
+FROM `region-us`.INFORMATION_SCHEMA.TABLE_STORAGE
+WHERE table_schema = 'my_dataset'</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── COST MANAGEMENT ── -->
+    <section id="cost-management" class="mb-16">
+      <div class="text-xs font-mono text-violet-400 mb-2 uppercase tracking-widest">CO-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Cost Management</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices to monitor, control, and reduce BigQuery spend without sacrificing analytical capability.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Always preview query cost before running</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">The BigQuery console dry-run and the --dry_run flag return bytes billed without executing the query. Build this check into CI pipelines and analyst workflows.</p>
+        <pre>from google.cloud import bigquery
+client = bigquery.Client()
+job_config = bigquery.QueryJobConfig(dry_run=True, use_query_cache=True)
+job = client.query('SELECT * FROM dataset.table LIMIT 100', job_config=job_config)
+print(f'Bytes processed: {job.total_bytes_processed / 1e9:.2f} GB')</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-002</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Leverage query result caching</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery caches query results for 24 hours. Identical queries are free. Avoid defeating the cache with non-deterministic functions like NOW() or RAND().</p>
+        <pre>-- Cache-friendly: date is a parameter, not NOW()
+DECLARE report_date DATE DEFAULT '2024-06-01';
+SELECT COUNT(*) FROM events WHERE event_date = report_date</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use materialised views and scheduled queries</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Pre-aggregate expensive computations into materialised views. Dashboards query the small summary table instead of scanning the raw fact table.</p>
+        <pre>CREATE MATERIALIZED VIEW dataset.daily_revenue
+OPTIONS(enable_refresh=true, refresh_interval_minutes=60)
+AS
+SELECT DATE(order_date) AS day, SUM(amount) AS revenue
+FROM dataset.orders GROUP BY day</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-004</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Set budgets, quotas, and cost alerts</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Use Google Cloud Budget Alerts and BigQuery custom quotas to prevent runaway queries. Per-project and per-user daily byte limits act as a safety net.</p>
+        <pre># Set a hard 10 GB per-query limit
+job_config = bigquery.QueryJobConfig(
+    maximum_bytes_billed=10 * 1024**3  # 10 GB
+)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Storage Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use long-term storage pricing and table expiration</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Tables not modified for 90+ days drop to long-term storage pricing (~50% cheaper). Set expiration on staging and temporary tables.</p>
+        <pre>CREATE TABLE dataset.temp_staging
+OPTIONS(
+  expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+)
+AS SELECT ...</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-006</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use BigQuery Editions for predictable workloads</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">On-demand pricing bills per TB scanned — unpredictable for heavy pipelines. BigQuery Editions provide reserved slots with autoscaling and commitments for significant discounts.</p>
+        <pre>-- Check average and peak slot usage to estimate reservation size
+SELECT
+  DATE(creation_time) AS day,
+  MAX(total_slot_ms) / (1000 * 60 * 60 * 24) AS peak_slot_hours
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+GROUP BY day ORDER BY peak_slot_hours DESC</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-007</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Storage Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Avoid repeated table overwrites to reduce time-travel storage</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Every WRITE_TRUNCATE retains the previous snapshot in time-travel storage (up to 7 days). Use WRITE_APPEND + MERGE or reduce the time-travel window for high-churn tables.</p>
+        <pre>ALTER TABLE dataset.daily_staging
+SET OPTIONS(max_time_travel_hours = 48);</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-008</span><span class="badge badge-low">LOW</span><span class="text-xs text-gray-500">Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Preview data without running queries</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Use the BigQuery console Preview tab, bq head, or the tabledata.list API — none trigger query billing.</p>
+        <pre># Free row preview via CLI (no query charge)
+bq head --max_rows=20 project:dataset.tablename</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">CO-009</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Materialise intermediate stages to reduce repeated scanning</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Break ETL into explicit destination table stages. Each intermediate table is written once and queried from its smaller result.</p>
+        <pre>-- Stage 1: filter once
+CREATE OR REPLACE TABLE dataset.orders_2024
+OPTIONS(expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY))
+AS SELECT * FROM dataset.raw_orders WHERE order_date >= '2024-01-01';
+
+-- Stage 2: aggregate from the small table (cheap)
+SELECT region, SUM(amount) FROM dataset.orders_2024 GROUP BY region</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── SECURITY ── -->
+    <section id="security" class="mb-16">
+      <div class="text-xs font-mono text-purple-400 mb-2 uppercase tracking-widest">SE-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Security & Access Control</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices to secure BigQuery data, control access at the right granularity, and maintain compliance with data-governance policies.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Security &amp; Compliance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Apply principle of least privilege with IAM</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Grant the minimum BigQuery IAM role required for each principal. Prefer predefined roles over primitive roles and grant at the dataset or table level, not the project level.</p>
+        <pre>gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member='serviceAccount:pipeline@project.iam.gserviceaccount.com' \
+  --role='roles/bigquery.dataViewer'</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Data Privacy</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use column-level and row-level security</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Column-level security (Policy Tags) restricts access to PII columns. Row-level security (Row Access Policies) filters rows based on the querying user's attributes.</p>
+        <pre>CREATE ROW ACCESS POLICY region_filter
+ON dataset.sales
+GRANT TO ('group:apac-sales@company.com')
+FILTER USING (region = 'APAC')</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Compliance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Encrypt sensitive data with Cloud KMS CMEK</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">For regulatory requirements (HIPAA, PCI-DSS) use Customer-Managed Encryption Keys via Cloud KMS to retain key control.</p>
+        <pre>CREATE TABLE dataset.phi_records
+OPTIONS(
+  kms_key_name = 'projects/proj/locations/us/keyRings/ring/cryptoKeys/bq-key'
+)
+AS SELECT * FROM staging.phi_staging</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-004</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Security &amp; Compliance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Audit and monitor data access with Cloud Audit Logs</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Enable Data Access audit logs (DATA_READ, DATA_WRITE). Export logs to BigQuery for anomaly detection and compliance reporting.</p>
+        <pre>-- Find top data consumers in the last 7 days
+SELECT user_email, SUM(total_bytes_billed)/1e12 AS tb_billed
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+GROUP BY user_email ORDER BY tb_billed DESC LIMIT 20</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Data Exfiltration Prevention</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use VPC Service Controls and authorised views</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">VPC Service Controls create a security perimeter around BigQuery. Authorised views let you share query results without exposing the underlying table.</p>
+        <pre>CREATE VIEW analytics.users_masked AS
+SELECT
+  user_id,
+  CONCAT(LEFT(email, 2), '****@', SPLIT(email, '@')[OFFSET(1)]) AS email_masked,
+  country, created_date
+FROM pii_dataset.users</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-006</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Data Privacy</span></div>
+        <h3 class="text-lg font-semibold mb-2">Apply dynamic data masking to sensitive columns</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery dynamic data masking applies masking rules automatically based on the querying user's role. Analysts see masked values; authorised roles see the original data.</p>
+        <pre>CREATE OR REPLACE DATA MASKING POLICY hash_email
+USING (SHA256(CAST(email AS BYTES)));</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-007</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Security</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use Workload Identity Federation instead of service account keys</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">SA JSON key files can be leaked and are hard to rotate. Workload Identity Federation lets external workloads authenticate without a long-lived credential.</p>
+        <pre># GitHub Actions: authenticate via Workload Identity (no key file)
+- uses: google-github-actions/auth@v2
+  with:
+    workload_identity_provider: 'projects/123/locations/global/workloadIdentityPools/pool/providers/github'
+    service_account: 'bq-pipeline@project.iam.gserviceaccount.com'</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SE-008</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Compliance &amp; Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Enable and govern data lineage with Dataplex</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Dataplex automatically tracks table-level and column-level data lineage across BigQuery jobs. Essential for impact analysis and GDPR right-to-erasure.</p>
+        <pre>gcloud services enable datalineage.googleapis.com --project=PROJECT_ID</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── MATERIALIZED VIEWS ── -->
+    <section id="materialized-views" class="mb-16">
+      <div class="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">MV-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Materialized Views</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for creating and managing BigQuery materialized views to pre-aggregate expensive computations, reduce query costs, and accelerate BI dashboards.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost &amp; Freshness</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use incremental materialized views for near-real-time aggregations</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Incremental MVs only process new data since the last refresh rather than recomputing the entire result. Combined with max_staleness, they deliver sub-minute freshness at a fraction of the cost.</p>
+        <pre>CREATE MATERIALIZED VIEW dataset.hourly_revenue
+OPTIONS(
+  enable_refresh = true,
+  refresh_interval_minutes = 60,
+  max_staleness = INTERVAL '90' MINUTE
+)
+AS
+SELECT
+  TIMESTAMP_TRUNC(order_ts, HOUR) AS hour,
+  region,
+  SUM(amount) AS revenue, COUNT(*) AS order_count
+FROM dataset.orders GROUP BY 1, 2</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-002</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Tune max_staleness to balance freshness vs cost</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">When a query hits a table with an associated MV, BigQuery serves the MV result if it is within max_staleness. Too tight forces full scans; too loose serves stale data.</p>
+        <pre>ALTER MATERIALIZED VIEW dataset.live_orders
+SET OPTIONS(max_staleness = INTERVAL '15' MINUTE)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-003</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Correctness</span></div>
+        <h3 class="text-lg font-semibold mb-2">Avoid non-deterministic functions in MV definitions</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Functions like CURRENT_TIMESTAMP(), RAND(), or GENERATE_UUID() are evaluated at refresh time, not query time — causing subtle correctness bugs.</p>
+        <pre>-- GOOD: derive snapshot from the data itself
+CREATE MATERIALIZED VIEW dataset.orders_summary AS
+SELECT DATE(order_ts) AS order_date, SUM(amount) AS daily_revenue
+FROM dataset.orders GROUP BY 1</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-004</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance &amp; Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Align MV partition and cluster with query patterns</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Choose cluster columns that match the filters your BI tool or downstream queries use most often.</p>
+        <pre>CREATE MATERIALIZED VIEW dataset.sales_by_region
+CLUSTER BY region, product_id
+AS
+SELECT sale_date, region, product_id, SUM(revenue) AS revenue
+FROM dataset.sales GROUP BY 1, 2, 3</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost Visibility</span></div>
+        <h3 class="text-lg font-semibold mb-2">Monitor MV refresh cost and staleness via INFORMATION_SCHEMA</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">MV refreshes consume slot-time and are billed like regular queries. Track refresh frequency and last_refresh_time to catch runaway MVs.</p>
+        <pre>SELECT table_schema, table_name, last_refresh_time,
+  TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), last_refresh_time, MINUTE) AS stale_minutes
+FROM `region-us`.INFORMATION_SCHEMA.MATERIALIZED_VIEWS_BY_PROJECT
+ORDER BY stale_minutes DESC</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-006</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use BI Engine for sub-second dashboard query acceleration</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery BI Engine is an in-memory analysis service that caches frequently-queried data and accelerates SQL workloads from Looker Studio and Looker.</p>
+        <pre>-- Create a 10 GB BI Engine reservation in us-central1
+-- (done via Console: BigQuery → BI Engine → Create reservation)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MV-007</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Correctness &amp; Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use MERGE for incremental MV-like updates on unsupported patterns</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">When your aggregation logic exceeds native MV capabilities, implement an incremental MERGE pattern into a destination table, processing only new partitions each run.</p>
+        <pre>MERGE dataset.daily_summary AS T
+USING (
+  SELECT DATE(order_ts) AS day, region, SUM(amount) AS revenue
+  FROM dataset.orders
+  WHERE DATE(order_ts) = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+  GROUP BY 1, 2
+) AS S
+ON T.day = S.day AND T.region = S.region
+WHEN MATCHED THEN UPDATE SET T.revenue = S.revenue
+WHEN NOT MATCHED THEN INSERT (day, region, revenue) VALUES (S.day, S.region, S.revenue)</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── MONITORING ── -->
+    <section id="monitoring" class="mb-16">
+      <div class="text-xs font-mono text-violet-400 mb-2 uppercase tracking-widest">MO-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Monitoring & Observability</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for observing BigQuery job health, tracking cost attribution, detecting anomalies, and building operational dashboards.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Visibility &amp; Debugging</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use INFORMATION_SCHEMA.JOBS as your primary audit trail</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">JOBS_BY_PROJECT records every query, load, extract, and copy job. First place to look for slow queries, expensive scans, failed jobs, and quota violations.</p>
+        <pre>-- Top 10 most expensive queries in the last 24 hours
+SELECT user_email, query,
+  ROUND(total_bytes_billed / 1e12, 4) AS tb_billed,
+  TIMESTAMP_DIFF(end_time, start_time, SECOND) AS duration_s
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+  AND job_type = 'QUERY' AND state = 'DONE'
+ORDER BY tb_billed DESC LIMIT 10</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance &amp; Cost Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Set up slot utilisation alerts in Cloud Monitoring</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery exposes slot utilisation metrics via Cloud Monitoring. For reserved capacity, sustained high utilisation means queries are queuing.</p>
+        <pre>gcloud alpha monitoring policies create \
+  --display-name='BQ High Slot Utilisation' \
+  --condition-filter='metric.type="bigquery.googleapis.com/slots/allocated_for_project"' \
+  --condition-threshold-value=800 \
+  --condition-threshold-duration=300s</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost Accountability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Attribute cost by team and workload with labels</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery job labels propagate to Cloud Billing exports, enabling per-team and per-pipeline cost breakdown.</p>
+        <pre>job_config = bigquery.QueryJobConfig(
+    labels={
+        'team':        'analytics',
+        'pipeline':    'user-metrics',
+        'environment': 'production',
+    }
+)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-004</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Monitor and alert on query errors and failed jobs</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Failed BigQuery jobs are silent by default unless you explicitly monitor error_result in INFORMATION_SCHEMA.</p>
+        <pre>-- Find failed jobs in the last hour
+SELECT job_id, user_email, error_result.reason, error_result.message
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
+  AND error_result IS NOT NULL
+ORDER BY creation_time DESC</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance Regression Detection</span></div>
+        <h3 class="text-lg font-semibold mb-2">Track query performance trends over time</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Track p50/p95 query duration and bytes_billed per query signature over time to detect regressions.</p>
+        <pre>-- Weekly p95 query duration trend
+SELECT
+  DATE_TRUNC(creation_time, WEEK) AS week,
+  statement_type,
+  APPROX_QUANTILES(total_slot_ms, 100)[OFFSET(95)] / 1000 AS p95_slot_s
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 90 DAY)
+GROUP BY 1, 2 ORDER BY 1 DESC, 3 DESC</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-006</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost Visibility</span></div>
+        <h3 class="text-lg font-semibold mb-2">Audit storage costs with INFORMATION_SCHEMA.TABLE_STORAGE</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">TABLE_STORAGE gives a per-table breakdown of active, long-term, time-travel, and fail-safe physical bytes.</p>
+        <pre>SELECT table_name,
+  ROUND(total_logical_bytes / 1e9, 2)        AS logical_gb,
+  ROUND(time_travel_physical_bytes / 1e9, 2) AS time_travel_gb
+FROM `region-us`.INFORMATION_SCHEMA.TABLE_STORAGE
+ORDER BY total_logical_bytes DESC LIMIT 20</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">MO-007</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance &amp; Capacity Planning</span></div>
+        <h3 class="text-lg font-semibold mb-2">Monitor reservation slot utilisation and queue wait times</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">For capacity-based BigQuery editions, sustained high slot utilisation causes queries to queue. Track queue wait via INFORMATION_SCHEMA.JOBS.</p>
+        <pre>-- Detect queue wait time by reservation
+SELECT reservation_id, DATE(creation_time) AS day,
+  APPROX_QUANTILES(
+    TIMESTAMP_DIFF(start_time, creation_time, SECOND), 100
+  )[OFFSET(95)] AS p95_queue_s
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+GROUP BY 1, 2 ORDER BY p95_queue_s DESC</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── DATA INGESTION ── -->
+    <section id="data-ingestion" class="mb-16">
+      <div class="text-xs font-mono text-purple-400 mb-2 uppercase tracking-widest">DI-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Data Ingestion</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for loading data into BigQuery efficiently and reliably, covering batch loads, streaming, file formats, deduplication, and DML patterns.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">DI-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost &amp; Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use Storage Write API instead of legacy streaming inserts</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">The legacy insertAll streaming API charges per row and has lower throughput limits. The Storage Write API supports exactly-once delivery and is ~10× cheaper for high-volume writes.</p>
+        <pre>from google.cloud.bigquery_storage_v1 import BigQueryWriteClient, types
+
+client = BigQueryWriteClient()
+parent = client.table_path('project', 'dataset', 'table')
+write_stream = client.create_write_stream(
+    parent=parent,
+    write_stream=types.WriteStream(type_=types.WriteStream.Type.COMMITTED)
+)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">DI-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use columnar file formats for batch loads</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery natively reads Parquet, Avro, and ORC. These formats are compressed, self-describing, and load faster while consuming fewer slots than CSV/JSON.</p>
+        <pre>bq load \
+  --source_format=PARQUET \
+  --parquet_enable_list_inference=true \
+  project:dataset.table \
+  'gs://bucket/data/events/dt=2024-06-01/*.parquet'</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">DI-003</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance &amp; Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Batch DML operations — avoid single-row mutations</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BigQuery DML triggers background compaction after each statement. Issuing thousands of single-row DML statements generates excessive mutation metadata and can exhaust quotas.</p>
+        <pre>-- GOOD: stage all rows then bulk-insert
+INSERT INTO dataset.target_table (id, value, updated_at)
+SELECT id, value, updated_at
+FROM dataset.staging_table WHERE load_date = CURRENT_DATE()</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">DI-004</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance &amp; Correctness</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use MERGE for upsert patterns instead of DELETE + INSERT</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">A MERGE statement performs both update and insert in a single atomic pass and is easier to make idempotent than DELETE + INSERT.</p>
+        <pre>MERGE dataset.customers AS T
+USING (
+  SELECT customer_id, name, email, updated_at
+  FROM dataset.customers_staging
+  WHERE DATE(updated_at) = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+) AS S
+ON T.customer_id = S.customer_id
+WHEN MATCHED AND S.updated_at > T.updated_at THEN
+  UPDATE SET name = S.name, email = S.email, updated_at = S.updated_at
+WHEN NOT MATCHED THEN
+  INSERT (customer_id, name, email, updated_at)
+  VALUES (S.customer_id, S.name, S.email, S.updated_at)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">DI-005</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Data Quality &amp; Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Implement idempotent deduplication for streaming pipelines</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Streaming pipelines can deliver duplicate records during retries. Use Storage Write API COMMITTED streams for exactly-once semantics, or implement downstream deduplication with ROW_NUMBER().</p>
+        <pre>CREATE OR REPLACE TABLE dataset.events_deduped AS
+SELECT * EXCEPT(row_num) FROM (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY event_id
+      ORDER BY ingestion_timestamp DESC
+    ) AS row_num
+  FROM dataset.events_raw
+)
+WHERE row_num = 1</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">DI-006</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Data Quality</span></div>
+        <h3 class="text-lg font-semibold mb-2">Validate and enforce schema on load</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Use autodetect only for exploration; enforce explicit schemas in production. Enable schema update options only intentionally.</p>
+        <pre>schema = [
+    bigquery.SchemaField('event_id', 'STRING', mode='REQUIRED'),
+    bigquery.SchemaField('event_ts', 'TIMESTAMP', mode='REQUIRED'),
+    bigquery.SchemaField('amount',   'NUMERIC',   mode='NULLABLE'),
+]
+job_config = bigquery.LoadJobConfig(
+    schema=schema,
+    source_format=bigquery.SourceFormat.PARQUET,
+)</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── WORKLOAD MANAGEMENT ── -->
+    <section id="workload-management" class="mb-16">
+      <div class="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">WM-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Workload Management</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for managing BigQuery slot capacity, reservations, autoscaling, job concurrency, and workload isolation.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">WM-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance &amp; Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Isolate workloads with separate reservations</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Sharing a single slot pool across interactive queries, batch ETL, and development workloads causes priority inversion. Use separate reservations to guarantee isolation.</p>
+        <pre>bq mk --reservation --location=US --slots=500 prod-interactive
+bq mk --reservation --location=US --slots=200 prod-batch
+bq mk --reservation --location=US --slots=50  dev</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">WM-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost &amp; Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Configure autoscaling baselines and max slots correctly</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Setting baseline too high wastes money; setting max too low throttles queries during peaks. Use INFORMATION_SCHEMA history to size baselines.</p>
+        <pre>-- Estimate p50 and p95 slot consumption
+SELECT reservation_id,
+  APPROX_QUANTILES(total_slot_ms / 1000, 100)[OFFSET(50)] AS p50_slot_s,
+  APPROX_QUANTILES(total_slot_ms / 1000, 100)[OFFSET(95)] AS p95_slot_s
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+GROUP BY reservation_id</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">WM-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost &amp; Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Set job timeouts and query priorities to prevent runaway jobs</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Set job_timeout_ms to cancel queries exceeding expected duration, and use BATCH priority for non-urgent ETL to allow BigQuery to schedule opportunistically.</p>
+        <pre>job_config = bigquery.QueryJobConfig(
+    job_timeout_ms=600_000,          # Cancel after 10 minutes
+    maximum_bytes_billed=50 * 1e9,   # Hard 50 GB cost cap
+    priority=bigquery.QueryPriority.BATCH,
+    labels={'team': 'data-eng', 'pipeline': 'nightly-etl'},
+)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">WM-004</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use capacity commitments for predictable cost and performance</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Annual and 3-year slot commitments offer significant discounts (up to 25–50%). Use FLEX commitments for burst windows; annual commitments for the stable baseline.</p>
+        <pre>-- View current capacity commitments
+SELECT commitment_id, slot_count, plan, state,
+  commitment_start_time, commitment_end_time
+FROM `region-us`.INFORMATION_SCHEMA.CAPACITY_COMMITMENTS
+ORDER BY commitment_start_time DESC</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">WM-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost Accountability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Label all jobs for cost attribution and workload analysis</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Job labels are the only reliable way to attribute BigQuery costs to teams and pipelines in the Cloud Billing export.</p>
+        <pre>-- Find top cost by team label over the last 30 days
+SELECT
+  labels['team'] AS team,
+  ROUND(SUM(total_bytes_billed) / 1e12, 3) AS tb_billed,
+  COUNT(*) AS job_count
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT, UNNEST([labels]) AS kv
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+GROUP BY team ORDER BY tb_billed DESC</pre>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div class="border-t border-white/5 pt-8 text-center text-gray-600 text-sm">
+      <a href="https://github.com/sreekanth-kc/BqForge" target="_blank" class="hover:text-white transition-colors">BqForge on GitHub</a>
+      <span class="mx-3">·</span>
+      <a href="index.html" class="hover:text-white transition-colors">Back to home</a>
+    </div>
+
+  </main>
+
+  <script>
+    // Highlight active sidebar link on scroll
+    const sections = document.querySelectorAll('section[id], div[id]');
+    const links = document.querySelectorAll('.sidebar-category');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.sidebar-category[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '-80px 0px -60% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>
