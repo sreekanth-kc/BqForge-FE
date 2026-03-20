@@ -1,6 +1,6 @@
-# QueryCure — Frontend
+# BqForge — Frontend
 
-Landing page and documentation site for [QueryCure](https://github.com/sreekanth-kc/QueryCure), an open source MCP server that gives your AI safe, cost-aware access to BigQuery — including schema exploration, query execution, and spend analysis.
+Landing page and documentation site for [BqForge](https://github.com/sreekanth-kc/BqForge), an open source MCP server that gives your AI safe, cost-aware access to BigQuery — including schema exploration, query execution, and spend analysis.
 
 ## Pages
 
@@ -31,4 +31,4 @@ npx serve .
 
 ## Related
 
-- [QueryCure MCP Server](https://github.com/sreekanth-kc/QueryCure) — the server this site documents
+- [BqForge MCP Server](https://github.com/sreekanth-kc/BqForge) — the server this site documents
