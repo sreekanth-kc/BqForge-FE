@@ -229,7 +229,7 @@
         Documentation
       </h1>
       <p class="text-gray-400 max-w-2xl leading-relaxed">
-        BqForge is an MCP (Model Context Protocol) server that exposes 62+ curated BigQuery best practices across 13 categories as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, partitioning, BI Engine, authorized views, and more — plus 30+ live GCP tools for real-time analysis.
+        BqForge is an MCP (Model Context Protocol) server that exposes 80+ curated BigQuery best practices across 13 categories as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, partitioning, BI Engine, authorized views, and more — plus 31 live GCP tools for real-time analysis.
       </p>
 
       <div class="mt-6 flex flex-wrap gap-3">
@@ -262,6 +262,10 @@
       <div class="tool-row">
         <div class="tool-name">review_query</div>
         <div class="text-gray-400 text-sm leading-relaxed">Analyse a SQL query for best-practice violations — SELECT *, missing partition filters, CROSS JOINs, non-deterministic functions, and more.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">review_query_with_schema</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Schema-aware SQL review. Fetches the actual partition and clustering columns from BigQuery and checks whether the WHERE clause filters on the real partition column — not just any date expression. Use alongside <code>review_query</code> for complete coverage.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">get_best_practices</div>
@@ -1389,6 +1393,19 @@ AS SELECT * FROM staging.events WHERE FALSE</pre>
           <div class="dont-item"><span class="dont-icon">✗</span><span>Avoid MONTH partitioning if queries typically filter on a specific day</span></div>
         </div>
       </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">PT-004</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use integer-range partitioning for non-time keys</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">When the natural query filter is an integer ID (e.g. customer_id, shard_id), use integer-range partitioning instead of forcing a timestamp column.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Define start, end, and interval for integer range partitions</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Keep the number of partitions manageable (&lt; 4000)</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't use high-cardinality integers with very small intervals — creates too many partitions</span></div>
+        </div>
+        <pre>CREATE TABLE my_dataset.customers
+PARTITION BY RANGE_BUCKET(customer_id, GENERATE_ARRAY(0, 10000000, 100000));</pre>
+      </div>
     </section>
 
     <hr class="section-divider">
@@ -1507,6 +1524,25 @@ ON raw.events
 GRANT TO ("group:team-a@company.com")
 FILTER USING (tenant_id = 'team-a')</pre>
       </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">AV-004</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Security</span></div>
+        <h3 class="text-lg font-semibold mb-2">Audit authorized view and IAM usage regularly</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Authorized views and IAM bindings accumulate over time, and regular audits prevent privilege creep and stale access to deprecated views.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Use Cloud Audit Logs (DATA_READ, DATA_WRITE) to track who queries sensitive views</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Periodically review authorized view lists on datasets via the BigQuery API</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Remove authorization for deleted/deprecated views immediately</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't rely on manual tracking of who has view authorization</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't authorize views from dev datasets on production source tables</span></div>
+        </div>
+        <pre>SELECT protopayload_auditlog.authenticationInfo.principalEmail,
+       protopayload_auditlog.resourceName,
+       timestamp
+FROM `my_project.audit_logs.cloudaudit_googleapis_com_data_access`
+WHERE timestamp > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+  AND protopayload_auditlog.resourceName LIKE '%sensitive_view%'</pre>
+      </div>
     </section>
 
     <hr class="section-divider">
@@ -1547,6 +1583,47 @@ GROUP BY 1, 2</pre>
         <pre>-- Configure via Transfer Service API or Cloud Console
 -- Set schedule: "every 24 hours" starting at 02:00 UTC
 -- Priority: BATCH (enables opportunistic scheduling)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SQ-004</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use Dataform assertions to validate output data</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Pipeline outputs should be validated after each run. Dataform assertions run automatically and block downstream dependencies if data quality fails.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Add row count assertions (&gt; 0 rows)</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Add uniqueness assertions on primary key columns</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Add referential integrity checks between related tables</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't push pipeline outputs to downstream consumers without validation</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't skip assertions in production to save cost</span></div>
+        </div>
+        <pre>-- Dataform SQLX assertion:
+config {
+  type: 'assertion',
+  description: 'daily_summary must have rows for each day'
+}
+
+SELECT date
+FROM ${ref('daily_summary')}
+GROUP BY date
+HAVING COUNT(*) = 0  -- Fails if any date has 0 rows</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SQ-005</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Stagger scheduled query start times to avoid slot contention</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">When many scheduled queries start at exactly the same time (e.g. midnight), they compete for slots and all run slower. Stagger start times by 5–15 minutes.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Spread query start times (00:00, 00:05, 00:15, 00:30)</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Prioritize critical pipelines with earlier start times</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Use Dataform workflow scheduling to control dependency ordering</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't schedule all daily pipelines at exactly midnight</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't assume flat-rate slots eliminate all contention</span></div>
+        </div>
+        <pre># Cron schedules spread across the hour:
+# Critical pipeline:   0 0 * * *   (00:00)
+# Secondary pipeline:  5 0 * * *   (00:05)
+# Reporting rollup:   15 0 * * *   (00:15)
+# Archive job:        30 0 * * *   (00:30)</pre>
       </div>
     </section>
 
