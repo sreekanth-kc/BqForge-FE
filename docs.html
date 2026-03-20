@@ -212,6 +212,11 @@
     <a href="#monitoring"           class="sidebar-category">Monitoring</a>
     <a href="#data-ingestion"       class="sidebar-category">Data Ingestion</a>
     <a href="#workload-management"  class="sidebar-category">Workload Management</a>
+    <a href="#partitioning"         class="sidebar-category">Partitioning</a>
+    <a href="#bi-engine"            class="sidebar-category">BI Engine</a>
+    <a href="#storage-pricing"      class="sidebar-category">Storage Pricing</a>
+    <a href="#authorized-views"     class="sidebar-category">Authorized Views</a>
+    <a href="#scheduled-queries"    class="sidebar-category">Scheduled Queries</a>
   </aside>
 
   <!-- Main content -->
@@ -224,7 +229,7 @@
         Documentation
       </h1>
       <p class="text-gray-400 max-w-2xl leading-relaxed">
-        BqForge is an MCP (Model Context Protocol) server that exposes curated BigQuery best practices as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, and more.
+        BqForge is an MCP (Model Context Protocol) server that exposes 62+ curated BigQuery best practices across 13 categories as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, partitioning, BI Engine, authorized views, and more — plus 30+ live GCP tools for real-time analysis.
       </p>
 
       <div class="mt-6 flex flex-wrap gap-3">
@@ -241,8 +246,9 @@
     <!-- MCP Tools -->
     <section id="tools" class="mb-16">
       <h2 class="text-2xl font-bold mb-2">MCP Tools</h2>
-      <p class="text-gray-500 text-sm mb-8">7 callable tools exposed by the BqForge server. Use them individually or let your AI chain them automatically.</p>
+      <p class="text-gray-500 text-sm mb-8">30+ callable tools exposed by the BqForge server — best-practice tools plus optional live GCP tools. Use them individually or let your AI chain them automatically.</p>
 
+      <div class="text-xs uppercase tracking-widest text-gray-600 mb-3 mt-6">Workflow Tools</div>
       <div class="tool-row">
         <div class="tool-name">resolve_topic</div>
         <div class="text-gray-400 text-sm leading-relaxed">Resolve a natural-language question to ranked practice IDs with relevance scores. Always the first step in the two-step workflow.</div>
@@ -251,13 +257,15 @@
         <div class="tool-name">get_practices</div>
         <div class="text-gray-400 text-sm leading-relaxed">Fetch focused practice content within a token budget. Assembles the best-matching practices in relevance order until the budget is exhausted.</div>
       </div>
+
+      <div class="text-xs uppercase tracking-widest text-gray-600 mb-3 mt-6">Best Practice Tools</div>
       <div class="tool-row">
         <div class="tool-name">review_query</div>
         <div class="text-gray-400 text-sm leading-relaxed">Analyse a SQL query for best-practice violations — SELECT *, missing partition filters, CROSS JOINs, non-deterministic functions, and more.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">get_best_practices</div>
-        <div class="text-gray-400 text-sm leading-relaxed">Retrieve all practices for a given category: <code>query_optimization</code>, <code>schema_design</code>, <code>cost_management</code>, <code>security</code>, <code>materialized_views</code>, <code>monitoring</code>, <code>data_ingestion</code>, <code>workload_management</code>.</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Retrieve all practices for a given category: <code>query_optimization</code>, <code>schema_design</code>, <code>cost_management</code>, <code>security</code>, <code>materialized_views</code>, <code>monitoring</code>, <code>data_ingestion</code>, <code>workload_management</code>, <code>partitioning</code>, <code>bi_engine</code>, <code>storage_pricing</code>, <code>authorized_views</code>, <code>scheduled_queries</code>.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">search_practices</div>
@@ -265,11 +273,113 @@
       </div>
       <div class="tool-row">
         <div class="tool-name">get_practice_detail</div>
-        <div class="text-gray-400 text-sm leading-relaxed">Get the full detail for a single practice by ID — e.g. <code>QO-002</code>, <code>SD-001</code>, <code>SE-003</code>.</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Get the full detail for a single practice by ID — e.g. <code>QO-002</code>, <code>SD-001</code>, <code>SE-003</code>, <code>PT-001</code>, <code>BE-001</code>.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">list_all_practice_ids</div>
-        <div class="text-gray-400 text-sm leading-relaxed">Return a compact list of every practice ID and title across all 8 categories.</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Return a compact list of every practice ID and title across all 13 categories.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">generate_cte_refactor</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Refactor deeply nested subqueries into clean, readable CTEs following BigQuery best practices.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">suggest_materialized_view</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Analyse a SQL query and suggest a materialized view definition that would accelerate it.</div>
+      </div>
+
+      <div class="text-xs uppercase tracking-widest text-gray-600 mb-3 mt-6">Live GCP Tools <span class="text-gray-700 normal-case tracking-normal">(requires GCP credentials)</span></div>
+      <div class="tool-row">
+        <div class="tool-name">check_gcp_connection</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Verify that GCP credentials are configured and BigQuery is reachable from the server.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">dry_run_query</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Estimate bytes billed and cost (USD) for any SQL before executing — no data scanned.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">execute_query</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Run a SQL query and return results directly in your AI session, with a configurable <code>max_bytes_billed</code> safety cap.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">explore_schema</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Inspect table schema, partition info, clustering fields, and row count for any BigQuery table.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_table_info</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Return detailed metadata for a table — creation time, last modified, size, num rows, schema.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">query_history</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Surface the most expensive queries run in your project over the past N days, ranked by bytes billed.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_cost_attribution</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Break down BigQuery spend by user, label, or dataset over a configurable time window.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">profile_table</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Sample a table and return column-level statistics: null rate, distinct count, min/max values.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">list_jobs</div>
+        <div class="text-gray-400 text-sm leading-relaxed">List currently running or recently completed BigQuery jobs in your project.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">cancel_job</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Cancel a running BigQuery job by job ID.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">estimate_query_cost</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Return the estimated on-demand cost in USD for a given SQL query using the current pricing rate.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_expensive_queries</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Find the top N most costly queries across the project, useful for identifying quick-win optimizations.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">get_slot_utilization</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Show slot usage trends over time — helps decide whether to switch from on-demand to capacity pricing.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">check_data_freshness</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Check when a table was last modified and alert if it hasn't been updated within a configurable SLA window.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">detect_schema_drift</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Compare the live table schema against an expected schema definition and surface any differences.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">suggest_schema_improvements</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Inspect a live table and recommend partition, cluster, and type optimizations based on BqForge practices.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">compare_tables</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Compare two tables by schema, row count, and a sample of column value distributions.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">list_materialized_views</div>
+        <div class="text-gray-400 text-sm leading-relaxed">List all materialized views in a dataset with their refresh status and staleness.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">explain_query_plan</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Fetch the query execution plan for a completed job and summarise the most expensive stages.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">detect_zombie_queries</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Find queries that run repeatedly but never improve — good candidates for materialized views or caching.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">map_table_lineage</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Trace upstream and downstream table dependencies by mining BigQuery job history.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">detect_performance_regression</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Compare recent query performance against a baseline period and flag statistically significant regressions.</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">nl_to_sql</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Describe what you want in plain English — BqForge inspects the real table schemas and generates best-practice SQL.</div>
       </div>
     </section>
 
@@ -1230,6 +1340,213 @@ SELECT
 FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT, UNNEST([labels]) AS kv
 WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
 GROUP BY team ORDER BY tb_billed DESC</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── PARTITIONING ── -->
+    <section id="partitioning" class="mb-16">
+      <div class="text-xs font-mono text-purple-400 mb-2 uppercase tracking-widest">PT-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Partitioning</h2>
+      <p class="text-gray-500 text-sm mb-10">Advanced partitioning strategies to minimise bytes scanned, reduce costs, and simplify data lifecycle management in BigQuery.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">PT-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost & Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Always filter on the partition column</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Queries that don't filter on the partition column perform full table scans, bypassing pruning entirely. Always include a partition filter in WHERE clauses on partitioned tables.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <div class="text-xs text-green-400 uppercase tracking-widest mb-2">Do</div>
+            <pre>SELECT * FROM orders
+WHERE DATE(created_at) = '2024-01-01'</pre>
+          </div>
+          <div>
+            <div class="text-xs text-red-400 uppercase tracking-widest mb-2">Don't</div>
+            <pre>SELECT * FROM orders
+WHERE order_status = 'OPEN'  -- no partition filter</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">PT-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost & Lifecycle</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use partition expiration to auto-delete old data</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Partition expiration automatically removes data older than N days, reducing active storage costs without manual cleanup scripts.</p>
+        <pre>CREATE TABLE sales.events
+PARTITION BY DATE(event_time)
+OPTIONS (partition_expiration_days = 90)
+AS SELECT * FROM staging.events WHERE FALSE</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">PT-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Choose the right partition granularity</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Daily partitioning suits most OLAP workloads. Hourly partitioning is appropriate only for very high-volume streaming tables where hour-level pruning provides meaningful savings.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Use DAY granularity for tables &lt;1 TB/day</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Use HOUR only when filtering by hour is common and the table exceeds 1 TB/day</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Avoid MONTH partitioning if queries typically filter on a specific day</span></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── BI ENGINE ── -->
+    <section id="bi-engine" class="mb-16">
+      <div class="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">BE-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">BI Engine</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for using BigQuery BI Engine to accelerate dashboard queries with in-memory analysis.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">BE-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Reserve BI Engine capacity for your most-queried tables</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BI Engine caches tables in memory for sub-second query latency. Reserve capacity sized to hold your hottest tables and prevent cache eviction during peak dashboard load.</p>
+        <pre>-- Check BI Engine utilisation (via INFORMATION_SCHEMA)
+SELECT job_id, bi_engine_statistics.bi_engine_mode,
+       bi_engine_statistics.acceleration_mode
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+  AND bi_engine_statistics IS NOT NULL
+LIMIT 100</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">BE-002</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost & Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Design BI-facing tables for BI Engine compatibility</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BI Engine accelerates simple aggregations and filters best. Avoid JS UDFs, ARRAY/STRUCT columns, and regex in BI-facing queries — these fall back to standard execution.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Use simple GROUP BY, SUM, COUNT, AVG aggregations</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Pre-flatten STRUCT/ARRAY columns into separate columns in BI views</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Avoid JavaScript UDFs in BI-facing queries — they disable acceleration</span></div>
+        </div>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">BE-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Prefer BI Engine over repeated on-demand queries for dashboards</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Every dashboard refresh on an un-cached table incurs on-demand bytes billed. A single BI Engine reservation can eliminate thousands of daily re-scans, paying for itself quickly at scale.</p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── STORAGE PRICING ── -->
+    <section id="storage-pricing" class="mb-16">
+      <div class="text-xs font-mono text-violet-400 mb-2 uppercase tracking-widest">SP-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Storage Pricing</h2>
+      <p class="text-gray-500 text-sm mb-10">Practices to minimise BigQuery storage costs through intelligent use of long-term pricing, physical billing, table expiry, and data lifecycle policies.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SP-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Let tables age into long-term storage pricing</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Tables and partitions that haven't been modified for 90+ consecutive days are automatically billed at the long-term rate (~50% cheaper). Avoid unnecessary table writes that reset this 90-day clock.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Append-only patterns let partitions age into long-term pricing automatically</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Avoid full table overwrites on historical partitions — they reset the 90-day timer</span></div>
+        </div>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SP-002</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Enable physical storage billing for compressed savings</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">By default, BigQuery bills for logical (uncompressed) storage. Switching to physical billing charges for actual compressed bytes on disk — often 30–70% less for columnar data.</p>
+        <pre>ALTER TABLE mydataset.large_table
+SET OPTIONS (storage_billing_model = 'PHYSICAL')</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SP-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost & Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Set table and dataset expiration policies</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Temporary and staging tables that are never cleaned up are a silent cost driver. Use default table expiration at the dataset level to auto-delete tables after a defined period.</p>
+        <pre>-- Set dataset-level default table expiration (7 days)
+bq update --default_table_expiration 604800 myproject:staging</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── AUTHORIZED VIEWS ── -->
+    <section id="authorized-views" class="mb-16">
+      <div class="text-xs font-mono text-purple-400 mb-2 uppercase tracking-widest">AV-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Authorized Views</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for using authorized views and authorized datasets to share data securely without granting direct table access.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">AV-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Security</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use authorized views instead of granting raw table access</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">An authorized view can query a source table and expose only the columns and rows a consumer should see — without ever granting that consumer IAM access to the underlying table.</p>
+        <pre>-- 1. Create the restricted view in a separate dataset
+CREATE VIEW reporting.orders_public AS
+SELECT order_id, product_id, status, created_date
+FROM raw.orders
+WHERE region = SESSION_USER() OR region = 'public';
+
+-- 2. Authorize the view to access the source dataset
+-- (done via Cloud Console or bq CLI — not SQL)</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">AV-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Security & Governance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Authorize datasets rather than individual views at scale</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">When you have many views across a dataset, authorizing the entire dataset to access a source dataset is cleaner and avoids per-view authorization overhead.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Authorize entire reporting dataset when all views share the same source</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Use separate datasets per consumer team to limit blast radius</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Don't grant bigquery.dataViewer on raw tables directly to end users</span></div>
+        </div>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">AV-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Security</span></div>
+        <h3 class="text-lg font-semibold mb-2">Combine authorized views with row-level security for fine-grained control</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">For multi-tenant patterns, layer row access policies on top of authorized views so each consumer automatically sees only their own rows without needing separate tables per tenant.</p>
+        <pre>CREATE ROW ACCESS POLICY tenant_filter
+ON raw.events
+GRANT TO ("group:team-a@company.com")
+FILTER USING (tenant_id = 'team-a')</pre>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── SCHEDULED QUERIES ── -->
+    <section id="scheduled-queries" class="mb-16">
+      <div class="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">SQ-xxx</div>
+      <h2 class="text-2xl font-bold mb-2">Scheduled Queries</h2>
+      <p class="text-gray-500 text-sm mb-10">Best practices for building reliable, cost-efficient scheduled query pipelines using BigQuery Data Transfer Service.</p>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SQ-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Reliability</span></div>
+        <h3 class="text-lg font-semibold mb-2">Use incremental INSERT instead of full table overwrites</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Full WRITE_TRUNCATE on large tables re-scans all source data on every run. Incremental patterns based on a run-time parameter only process new data, dramatically reducing cost and latency.</p>
+        <pre>-- Use @run_time and @run_date built-in parameters
+INSERT INTO reporting.daily_summary
+SELECT DATE(@run_date) AS report_date, user_id, SUM(revenue) AS revenue
+FROM events.transactions
+WHERE DATE(event_time) = DATE(@run_date)
+GROUP BY 1, 2</pre>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SQ-002</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Reliability & Cost</span></div>
+        <h3 class="text-lg font-semibold mb-2">Set maximum_bytes_billed on all scheduled queries</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">A logic error in a scheduled query can trigger a full scan of a petabyte table and generate a massive bill. A bytes-billed cap fails the job safely rather than processing runaway data.</p>
+        <div class="space-y-2 mt-2">
+          <div class="do-item"><span class="do-icon">✓</span><span>Set bytes limit to 2–5× the normal run cost as a safety margin</span></div>
+          <div class="do-item"><span class="do-icon">✓</span><span>Configure email notifications for failed scheduled query runs</span></div>
+          <div class="dont-item"><span class="dont-icon">✗</span><span>Never leave scheduled queries with no bytes-billed limit on production tables</span></div>
+        </div>
+      </div>
+
+      <div class="practice-card">
+        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">SQ-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost & Performance</span></div>
+        <h3 class="text-lg font-semibold mb-2">Schedule during off-peak hours to utilise flex slots</h3>
+        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Batch and scheduled queries run with BATCH priority can be queued during off-peak hours when slot capacity is available. This is especially effective with FLEX commitment slots, reducing on-demand costs.</p>
+        <pre>-- Configure via Transfer Service API or Cloud Console
+-- Set schedule: "every 24 hours" starting at 02:00 UTC
+-- Priority: BATCH (enables opportunistic scheduling)</pre>
       </div>
     </section>
 
