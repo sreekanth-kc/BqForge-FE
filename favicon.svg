@@ -8,11 +8,11 @@
   <rect width="100" height="100" rx="20" fill="url(#g)"/>
   <text
     x="50" y="58"
-    font-size="62"
+    font-size="40"
     font-family="monospace"
     font-weight="bold"
     fill="white"
     text-anchor="middle"
     dominant-baseline="middle"
-  >B</text>
+  >QC</text>
 </svg>
