@@ -1,13 +1,13 @@
-# BqForge — Frontend
+# QostEx — Frontend
 
-Landing page and documentation site for [BqForge](https://github.com/sreekanth-kc/BqForge), an MCP server packed with BigQuery best practices that helps your AI assistant write cheaper, faster queries.
+Landing page and documentation site for [QostEx](https://github.com/sreekanth-kc/QostEx), an open source MCP server that gives your AI safe, cost-aware access to BigQuery — including schema exploration, query execution, and spend analysis.
 
 ## Pages
 
 | File | Description |
 |---|---|
 | `index.html` | Landing page — hero, stats, categories, how-it-works, tools, install guide |
-| `docs.html` | Full documentation — all 47 practices across 8 categories with SQL examples |
+| `docs.html` | Full documentation — all 80+ practices across 12 categories with SQL examples |
 
 ## Stack
 
@@ -31,4 +31,4 @@ npx serve .
 
 ## Related
 
-- [BqForge MCP Server](https://github.com/sreekanth-kc/BqForge) — the server this site documents
+- [QostEx MCP Server](https://github.com/sreekanth-kc/QostEx) — the server this site documents
