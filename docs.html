@@ -213,7 +213,6 @@
     <a href="#data-ingestion"       class="sidebar-category">Data Ingestion</a>
     <a href="#workload-management"  class="sidebar-category">Workload Management</a>
     <a href="#partitioning"         class="sidebar-category">Partitioning</a>
-    <a href="#bi-engine"            class="sidebar-category">BI Engine</a>
     <a href="#storage-pricing"      class="sidebar-category">Storage Pricing</a>
     <a href="#authorized-views"     class="sidebar-category">Authorized Views</a>
     <a href="#scheduled-queries"    class="sidebar-category">Scheduled Queries</a>
@@ -229,7 +228,7 @@
         Documentation
       </h1>
       <p class="text-gray-400 max-w-2xl leading-relaxed">
-        BqForge is an MCP (Model Context Protocol) server that exposes 80+ curated BigQuery best practices across 13 categories as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, partitioning, BI Engine, authorized views, and more — plus 31 live GCP tools for real-time analysis.
+        BqForge is an MCP (Model Context Protocol) server that exposes 80+ curated BigQuery best practices across 12 categories as <strong class="text-white">Tools</strong> and <strong class="text-white">Resources</strong>. Connect it to Claude, Cursor, or any MCP-compatible client and your AI assistant gains deep, structured knowledge of BigQuery optimization, schema design, cost management, security, partitioning, BI Engine, authorized views, and more — plus 31 live GCP tools for real-time analysis.
       </p>
 
       <div class="mt-6 flex flex-wrap gap-3">
@@ -269,7 +268,7 @@
       </div>
       <div class="tool-row">
         <div class="tool-name">get_best_practices</div>
-        <div class="text-gray-400 text-sm leading-relaxed">Retrieve all practices for a given category: <code>query_optimization</code>, <code>schema_design</code>, <code>cost_management</code>, <code>security</code>, <code>materialized_views</code>, <code>monitoring</code>, <code>data_ingestion</code>, <code>workload_management</code>, <code>partitioning</code>, <code>bi_engine</code>, <code>storage_pricing</code>, <code>authorized_views</code>, <code>scheduled_queries</code>.</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Retrieve all practices for a given category: <code>query_optimization</code>, <code>schema_design</code>, <code>cost_management</code>, <code>security</code>, <code>materialized_views</code>, <code>monitoring</code>, <code>data_ingestion</code>, <code>workload_management</code>, <code>partitioning</code>, <code>storage_pricing</code>, <code>authorized_views</code>, <code>scheduled_queries</code>.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">search_practices</div>
@@ -277,11 +276,11 @@
       </div>
       <div class="tool-row">
         <div class="tool-name">get_practice_detail</div>
-        <div class="text-gray-400 text-sm leading-relaxed">Get the full detail for a single practice by ID — e.g. <code>QO-002</code>, <code>SD-001</code>, <code>SE-003</code>, <code>PT-001</code>, <code>BE-001</code>.</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Get the full detail for a single practice by ID — e.g. <code>QO-002</code>, <code>SD-001</code>, <code>SE-003</code>, <code>PT-001</code>.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">list_all_practice_ids</div>
-        <div class="text-gray-400 text-sm leading-relaxed">Return a compact list of every practice ID and title across all 13 categories.</div>
+        <div class="text-gray-400 text-sm leading-relaxed">Return a compact list of every practice ID and title across all 12 categories.</div>
       </div>
       <div class="tool-row">
         <div class="tool-name">generate_cte_refactor</div>
@@ -1410,44 +1409,6 @@ PARTITION BY RANGE_BUCKET(customer_id, GENERATE_ARRAY(0, 10000000, 100000));</pr
 
     <hr class="section-divider">
 
-    <!-- ── BI ENGINE ── -->
-    <section id="bi-engine" class="mb-16">
-      <div class="text-xs font-mono text-indigo-400 mb-2 uppercase tracking-widest">BE-xxx</div>
-      <h2 class="text-2xl font-bold mb-2">BI Engine</h2>
-      <p class="text-gray-500 text-sm mb-10">Best practices for using BigQuery BI Engine to accelerate dashboard queries with in-memory analysis.</p>
-
-      <div class="practice-card">
-        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">BE-001</span><span class="badge badge-high">HIGH</span><span class="text-xs text-gray-500">Performance</span></div>
-        <h3 class="text-lg font-semibold mb-2">Reserve BI Engine capacity for your most-queried tables</h3>
-        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BI Engine caches tables in memory for sub-second query latency. Reserve capacity sized to hold your hottest tables and prevent cache eviction during peak dashboard load.</p>
-        <pre>-- Check BI Engine utilisation (via INFORMATION_SCHEMA)
-SELECT job_id, bi_engine_statistics.bi_engine_mode,
-       bi_engine_statistics.acceleration_mode
-FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
-WHERE creation_time > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
-  AND bi_engine_statistics IS NOT NULL
-LIMIT 100</pre>
-      </div>
-
-      <div class="practice-card">
-        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">BE-002</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost & Performance</span></div>
-        <h3 class="text-lg font-semibold mb-2">Design BI-facing tables for BI Engine compatibility</h3>
-        <p class="text-gray-400 text-sm mb-4 leading-relaxed">BI Engine accelerates simple aggregations and filters best. Avoid JS UDFs, ARRAY/STRUCT columns, and regex in BI-facing queries — these fall back to standard execution.</p>
-        <div class="space-y-2 mt-2">
-          <div class="do-item"><span class="do-icon">✓</span><span>Use simple GROUP BY, SUM, COUNT, AVG aggregations</span></div>
-          <div class="do-item"><span class="do-icon">✓</span><span>Pre-flatten STRUCT/ARRAY columns into separate columns in BI views</span></div>
-          <div class="dont-item"><span class="dont-icon">✗</span><span>Avoid JavaScript UDFs in BI-facing queries — they disable acceleration</span></div>
-        </div>
-      </div>
-
-      <div class="practice-card">
-        <div class="flex flex-wrap items-center gap-2 mb-3"><span class="id-tag">BE-003</span><span class="badge badge-medium">MEDIUM</span><span class="text-xs text-gray-500">Cost</span></div>
-        <h3 class="text-lg font-semibold mb-2">Prefer BI Engine over repeated on-demand queries for dashboards</h3>
-        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Every dashboard refresh on an un-cached table incurs on-demand bytes billed. A single BI Engine reservation can eliminate thousands of daily re-scans, paying for itself quickly at scale.</p>
-      </div>
-    </section>
-
-    <hr class="section-divider">
 
     <!-- ── STORAGE PRICING ── -->
     <section id="storage-pricing" class="mb-16">
